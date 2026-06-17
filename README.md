@@ -113,65 +113,6 @@ Install the required libraries:
 pip install pygame numpy
 ```
 
----
-
-# ▶️ Running the Projects
-
-Clone the repository:
-
-```bash
-git clone https://github.com/yourusername/python-internship-projects.git
-```
-
-Navigate to the project directory:
-
-```bash
-cd python-internship-projects
-```
-
-Run any project:
-
-```bash
-python digital_clock.py
-```
-
-```bash
-python tic_tac_toe.py
-```
-
-```bash
-python snake_game.py
-```
-
-```bash
-python connect_four.py
-```
-
----
-
-# 📁 Repository Structure
-
-```
-Python-Internship-Projects/
-│
-├── Digital-Clock/
-│   └── digital_clock.py
-│
-├── Tic-Tac-Toe/
-│   └── tic_tac_toe.py
-│
-├── Snake-Game/
-│   └── snake_game.py
-│
-├── Connect-Four/
-│   └── connect_four.py
-│
-├── README.md
-└── LICENSE
-```
-
----
-
 # 🎯 Learning Outcomes
 
 * Strengthened Python programming fundamentals.
