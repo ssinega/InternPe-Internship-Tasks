@@ -1,0 +1,168 @@
+import tkinter as tk
+import random
+from collections import deque
+
+class SnakeGame:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Snake Game")
+        self.root.geometry("800x600")
+        self.root.resizable(False, False)
+        
+        # Game variables
+        self.cell_size = 20
+        self.grid_width = 40
+        self.grid_height = 30
+        self.snake = deque([(20, 15), (19, 15), (18, 15)])
+        self.direction = (1, 0)  # Moving right
+        self.next_direction = (1, 0)
+        self.food = self.spawn_food()
+        self.score = 0
+        self.game_over = False
+        self.game_speed = 100  # milliseconds
+        
+        # Create canvas
+        self.canvas = tk.Canvas(
+            root,
+            width=self.grid_width * self.cell_size,
+            height=self.grid_height * self.cell_size,
+            bg="black",
+            highlightthickness=0
+        )
+        self.canvas.pack(pady=10)
+        
+        # Score label
+        self.score_label = tk.Label(root, text=f"Score: {self.score}", font=("Arial", 14), fg="white", bg="black")
+        self.score_label.pack()
+        
+        # Instructions
+        instructions = tk.Label(
+            root,
+            text="Use Arrow Keys to control the snake. Space to restart.",
+            font=("Arial", 10),
+            fg="gray",
+            bg="black"
+        )
+        instructions.pack()
+        
+        # Bind keys
+        self.root.bind("<Up>", lambda e: self.change_direction((0, -1)))
+        self.root.bind("<Down>", lambda e: self.change_direction((0, 1)))
+        self.root.bind("<Left>", lambda e: self.change_direction((-1, 0)))
+        self.root.bind("<Right>", lambda e: self.change_direction((1, 0)))
+        self.root.bind("<space>", lambda e: self.restart_game())
+        
+        # Start game loop
+        self.update_game()
+    
+    def spawn_food(self):
+        while True:
+            food = (random.randint(0, self.grid_width - 1), random.randint(0, self.grid_height - 1))
+            if food not in self.snake:
+                return food
+    
+    def change_direction(self, new_direction):
+        # Prevent snake from reversing into itself
+        if (new_direction[0] * -1, new_direction[1] * -1) != self.direction:
+            self.next_direction = new_direction
+    
+    def update_game(self):
+        if not self.game_over:
+            self.direction = self.next_direction
+            
+            # Calculate new head position
+            head_x, head_y = self.snake[0]
+            new_x = head_x + self.direction[0]
+            new_y = head_y + self.direction[1]
+            
+            # Check wall collision
+            if new_x < 0 or new_x >= self.grid_width or new_y < 0 or new_y >= self.grid_height:
+                self.game_over = True
+            
+            # Check self collision
+            elif (new_x, new_y) in self.snake:
+                self.game_over = True
+            
+            else:
+                # Move snake
+                self.snake.appendleft((new_x, new_y))
+                
+                # Check food collision
+                if (new_x, new_y) == self.food:
+                    self.score += 10
+                    self.food = self.spawn_food()
+                    # Increase speed slightly
+                    if self.game_speed > 50:
+                        self.game_speed -= 1
+                else:
+                    self.snake.pop()
+        
+        self.draw_game()
+        self.root.after(self.game_speed, self.update_game)
+    
+    def draw_game(self):
+        self.canvas.delete("all")
+        
+        # Draw snake
+        for x, y in self.snake:
+            self.canvas.create_rectangle(
+                x * self.cell_size,
+                y * self.cell_size,
+                (x + 1) * self.cell_size,
+                (y + 1) * self.cell_size,
+                fill="lime",
+                outline="darkgreen"
+            )
+        
+        # Draw food
+        fx, fy = self.food
+        self.canvas.create_oval(
+            fx * self.cell_size + 2,
+            fy * self.cell_size + 2,
+            (fx + 1) * self.cell_size - 2,
+            (fy + 1) * self.cell_size - 2,
+            fill="red",
+            outline="darkred"
+        )
+        
+        # Draw game over message
+        if self.game_over:
+            self.canvas.create_text(
+                self.grid_width * self.cell_size // 2,
+                self.grid_height * self.cell_size // 2,
+                text="GAME OVER",
+                font=("Arial", 40, "bold"),
+                fill="red"
+            )
+            self.canvas.create_text(
+                self.grid_width * self.cell_size // 2,
+                self.grid_height * self.cell_size // 2 + 50,
+                text=f"Final Score: {self.score}",
+                font=("Arial", 20),
+                fill="white"
+            )
+            self.canvas.create_text(
+                self.grid_width * self.cell_size // 2,
+                self.grid_height * self.cell_size // 2 + 90,
+                text="Press SPACE to restart",
+                font=("Arial", 14),
+                fill="yellow"
+            )
+        
+        # Update score label
+        self.score_label.config(text=f"Score: {self.score}")
+    
+    def restart_game(self):
+        self.snake = deque([(20, 15), (19, 15), (18, 15)])
+        self.direction = (1, 0)
+        self.next_direction = (1, 0)
+        self.food = self.spawn_food()
+        self.score = 0
+        self.game_over = False
+        self.game_speed = 100
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.configure(bg="black")
+    game = SnakeGame(root)
+    root.mainloop()
