@@ -1,0 +1,38 @@
+#Task 1
+import tkinter as tk
+import time
+
+# Create the window
+root = tk.Tk()
+root.title("Digital Clock")
+
+# Window size
+root.geometry("900x250")
+root.configure(bg="white")
+root.resizable(False, False)
+
+# Purple background frame
+frame = tk.Frame(root, bg="#800080", width=850, height=180)
+frame.place(relx=0.5, rely=0.5, anchor="center")
+
+# Digital clock label
+clock = tk.Label(
+    frame,
+    text="00:00:00",
+    font=("DS-Digital", 90),   # Install DS-Digital font for best look
+    bg="#800080",
+    fg="black"
+)
+
+clock.place(relx=0.5, rely=0.5, anchor="center")
+
+
+def update_clock():
+    current = time.strftime("%H:%M:%S")
+    clock.config(text=current)
+    root.after(1000, update_clock)
+
+
+update_clock()
+
+root.mainloop()
