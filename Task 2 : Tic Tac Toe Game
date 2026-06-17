@@ -1,0 +1,75 @@
+# Task 2
+# Tic Tac Toe Game in Python
+
+board = [[" " for _ in range(3)] for _ in range(3)]
+
+
+def print_board():
+    for row in board:
+        print("|" + "|".join(row) + "|")
+        print("-----")
+
+
+def check_winner(player):
+    # Check rows
+    for row in board:
+        if all(cell == player for cell in row):
+            return True
+
+    # Check columns
+    for col in range(3):
+        if all(board[row][col] == player for row in range(3)):
+            return True
+
+    # Check diagonals
+    if all(board[i][i] == player for i in range(3)):
+        return True
+
+    if all(board[i][2 - i] == player for i in range(3)):
+        return True
+
+    return False
+
+
+def board_full():
+    for row in board:
+        if " " in row:
+            return False
+    return True
+
+
+current_player = "X"
+
+while True:
+    print_board()
+
+    print(f"Player {current_player}'s turn.")
+
+    try:
+        row = int(input("Enter the row number (0-2): "))
+        col = int(input("Enter the column number (0-2): "))
+    except ValueError:
+        print("Please enter numbers only.\n")
+        continue
+
+    if row not in [0,1,2] or col not in [0,1,2]:
+        print("Invalid position! Choose between 0 and 2.\n")
+        continue
+
+    if board[row][col] != " ":
+        print("Cell already occupied! Try again.\n")
+        continue
+
+    board[row][col] = current_player
+
+    if check_winner(current_player):
+        print_board()
+        print(f"🎉 Player {current_player} wins!")
+        break
+
+    if board_full():
+        print_board()
+        print("🤝 It's a Draw!")
+        break
+
+    current_player = "O" if current_player == "X" else "X"
